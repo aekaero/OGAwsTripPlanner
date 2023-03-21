@@ -20,18 +20,19 @@ class TripController {
     final fileKey = await ref.read(storageServiceProvider).uploadFile(file);
     // File has been uploaded now request a signed URL to access it.
     final result = await getSignedUrl(trip, fileKey);
-    if (result) ref.read(storageServiceProvider).resetUploadProgress();
+    if (result != null) ref.read(storageServiceProvider).resetUploadProgress();
   }
 
 // Refresh a Signed Image URL that whoes signiture has expired.
-  Future<bool> getSignedUrl(Trip trip, String? fileKey) async {
-    if (fileKey == null) return false;
-    final imageUrl =
-        await ref.read(storageServiceProvider).getImageUrl(fileKey);
+  Future<String?> getSignedUrl(Trip trip, String? fileKey) async {
+    if (fileKey == null) return null;
+    final ssp = ref.read(storageServiceProvider);
+    final imageUrl = await ssp.getImageUrl(fileKey);
     final updatedTrip =
         trip.copyWith(tripImageKey: fileKey, tripImageUrl: imageUrl);
-    await ref.read(tripsRepositoryProvider).update(updatedTrip);
-    return true;
+    final trp = ref.read(tripsRepositoryProvider);
+    await trp.update(updatedTrip);
+    return imageUrl;
   }
 
   ValueNotifier<double> uploadProgress() {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplify_trips_planner/common/ui/navigation_drawer.dart' as nd;
 import 'package:amplify_trips_planner/features/trip/ui/trip_gridview_item/trip_gridview_item.dart';
 import 'package:flutter/material.dart';
@@ -33,14 +35,13 @@ class TripsListPage extends ConsumerWidget {
     required Trip trip,
   }) async {
     //final oldUrl = trip.tripImageUrl;
-    await ref
-        .read(tripControllerProvider)
-        .getSignedUrl(trip, trip.tripImageKey);
+    final tripController = ref.read(tripControllerProvider);
+    final newUrl = await tripController.getSignedUrl(trip, trip.tripImageKey);
 
-    //   //final isSame = oldUrl == trip.tripImageUrl;
+    //   //final isSame = oldUrl == newUrl;
     //   //debugPrint('Is Same: $isSame');
     //   //debugPrint('OLD Url: $oldUrl');
-    //   //debugPrint('NEW Url: ${trip.tripImageUrl}');
+    //   //debugPrint('NEW Url: $newUrl');
     //   debugPrint('Url Refreshed for key: ${trip.tripImageKey}');
   }
 
