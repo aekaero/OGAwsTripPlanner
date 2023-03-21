@@ -1,6 +1,7 @@
 import 'package:amplify_trips_planner/features/trip/services/trips_datastore_service.dart';
 import 'package:amplify_trips_planner/models/Trip.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter/material.dart';
 
 final tripsRepositoryProvider = Provider<TripsRepository>((ref) {
   TripsDataStoreService tripsDataStoreService =
@@ -10,7 +11,9 @@ final tripsRepositoryProvider = Provider<TripsRepository>((ref) {
 
 final tripsListStreamProvider = StreamProvider.autoDispose<List<Trip?>>((ref) {
   final tripsRepository = ref.watch(tripsRepositoryProvider);
+  //debugPrint('fetching trips into tripsRepository');
   return tripsRepository.getTrips();
+  ;
 });
 
 final pastTripsListStreamProvider =
@@ -20,6 +23,10 @@ final pastTripsListStreamProvider =
 });
 
 final tripProvider =
+//  StreamProvider is used as I guess it is possible that multiple
+//  trips could be returned for the same ID?   Would a FutureProvider,
+//  which offers only a one time, and single, value provider
+//  Offer anything better?
     StreamProvider.autoDispose.family<Trip?, String>((ref, id) {
   final tripsRepository = ref.watch(tripsRepositoryProvider);
   return tripsRepository.get(id);

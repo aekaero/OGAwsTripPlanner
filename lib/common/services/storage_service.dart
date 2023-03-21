@@ -14,10 +14,14 @@ class StorageService {
   });
 
   ValueNotifier<double> uploadProgress = ValueNotifier<double>(0);
+
+// Fetch a signed URL for the S3 bucket for the passed key
   Future<String> getImageUrl(String key) async {
+//    debugPrint('getImageUrl Key: $key');
     final GetUrlResult result = await Amplify.Storage.getUrl(
       key: key,
-      options: S3GetUrlOptions(expires: 60000),
+      options: S3GetUrlOptions(expires: 120), //expires in 120 sec for testing
+      //options: S3GetUrlOptions(expires: 60000),
     );
     return result.url;
   }

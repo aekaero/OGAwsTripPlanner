@@ -28,7 +28,11 @@ class SelectedTripCard extends ConsumerWidget {
     required Trip trip,
   }) async {
     final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 25,
+      maxWidth: 300,
+    );
     if (pickedFile == null) {
       return;
     }
@@ -40,6 +44,7 @@ class SelectedTripCard extends ConsumerWidget {
         builder: (BuildContext context) {
           return const UploadProgressDialog();
         });
+    // Save the new file and record its keys with this trip
     await ref.read(tripControllerProvider).uploadFile(file, trip);
   }
 

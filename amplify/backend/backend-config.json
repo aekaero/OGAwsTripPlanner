@@ -1,63 +1,112 @@
 {
-  "auth": {
-    "amplifytripsplannere57d0b5c": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false,
-      "frontendAuthConfig": {
-        "socialProviders": [],
-        "usernameAttributes": [
-          "EMAIL"
-        ],
-        "signupAttributes": [
-          "EMAIL"
-        ],
-        "passwordProtectionSettings": {
-          "passwordPolicyMinLength": 8,
-          "passwordPolicyCharacters": []
-        },
-        "mfaConfiguration": "OFF",
-        "mfaTypes": [
-          "SMS"
-        ],
-        "verificationMechanisms": [
-          "EMAIL"
-        ]
-      }
-    }
-  },
   "api": {
     "amplifytripsplanner": {
-      "service": "AppSync",
-      "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
-          "category": "auth",
-          "resourceName": "amplifytripsplannere57d0b5c",
           "attributes": [
             "UserPoolId"
-          ]
+          ],
+          "category": "auth",
+          "resourceName": "amplifytripsplannere57d0b5c"
         }
       ],
       "output": {
         "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
               "userPoolId": "authamplifytripsplannere57d0b5c"
             }
-          },
-          "additionalAuthenticationProviders": []
+          }
         }
-      }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "amplifytripsplannere57d0b5c": {
+      "customAuth": false,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn",
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "amplifytripsplannere57d0b5cPostConfirmation",
+          "triggerProvider": "Cognito"
+        }
+      ],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    }
+  },
+  "function": {
+    "amplifytripsplannere57d0b5cPostConfirmation": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "amplifytripsplanner"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_amplifytripsplannere57d0b5cPostConfirmation_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "amplifytripsplannere57d0b5cPostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_amplifytripsplannere57d0b5cPostConfirmation_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "amplifytripsplannere57d0b5cPostConfirmation"
+        }
+      ]
     }
   },
   "storage": {
     "s3757c69ca": {
-      "service": "S3",
+      "dependsOn": [],
       "providerPlugin": "awscloudformation",
-      "dependsOn": []
+      "service": "S3"
     }
   }
 }

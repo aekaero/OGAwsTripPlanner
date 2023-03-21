@@ -1,6 +1,6 @@
 {
   "identityPoolName": "amplifytripsplannere57d0b5c_identitypool_e57d0b5c",
-  "allowUnauthenticatedIdentities": true,
+  "allowUnauthenticatedIdentities": false,
   "resourceNameTruncated": "amplife57d0b5c",
   "userPoolName": "amplifytripsplannere57d0b5c_userpool_e57d0b5c",
   "autoVerifiedAttributes": [
@@ -34,7 +34,7 @@
   "sharedId": "e57d0b5c",
   "resourceName": "amplifytripsplannere57d0b5c",
   "authSelections": "identityPoolAndUserPool",
-  "useDefault": "default",
+  "useDefault": "manual",
   "usernameAttributes": [
     "email"
   ],
@@ -55,5 +55,28 @@
     ]
   },
   "breakCircularDependency": true,
-  "dependsOn": []
+  "dependsOn": [
+    {
+      "category": "function",
+      "resourceName": "amplifytripsplannere57d0b5cPostConfirmation",
+      "triggerProvider": "Cognito",
+      "attributes": [
+        "Arn",
+        "Name"
+      ]
+    }
+  ],
+  "thirdPartyAuth": false,
+  "userPoolGroups": false,
+  "adminQueries": false,
+  "triggers": "{\"PostConfirmation\":[\"custom\"]}",
+  "hostedUI": false,
+  "authProviders": [],
+  "parentStack": {
+    "Ref": "AWS::StackId"
+  },
+  "permissions": [],
+  "authTriggerConnections": [
+    "{\"triggerType\":\"PostConfirmation\",\"lambdaFunctionName\":\"amplifytripsplannere57d0b5cPostConfirmation\"}"
+  ]
 }

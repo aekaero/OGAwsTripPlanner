@@ -87,7 +87,7 @@ class TripsDataStoreService {
 
       await Amplify.DataStore.save(newTrip);
     } on Exception catch (error) {
-      debugPrint(error.toString());
+      debugPrint('Error in updateTrip: ${error.toString()}');
     }
   }
 }

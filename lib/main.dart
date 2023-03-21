@@ -11,19 +11,16 @@ import 'amplifyconfiguration.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  bool isAmplifySuccessfullyConfigured = false;
+
   try {
     await _configureAmplify();
-    isAmplifySuccessfullyConfigured = true;
   } on AmplifyAlreadyConfiguredException {
     debugPrint('Amplify configuration failed.');
   }
 
   runApp(
-    ProviderScope(
-      child: TripsPlannerApp(
-        isAmplifySuccessfullyConfigured: isAmplifySuccessfullyConfigured,
-      ),
+    const ProviderScope(
+      child: TripsPlannerApp(),
     ),
   );
 }
