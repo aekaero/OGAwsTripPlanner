@@ -9,11 +9,13 @@ class TripGridViewItem extends StatelessWidget {
   const TripGridViewItem({
     required this.trip,
     required this.isPast,
+    required this.refreshUrl,
     super.key,
   });
 
   final Trip trip;
   final bool isPast;
+  final Function refreshUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +33,11 @@ class TripGridViewItem extends StatelessWidget {
               colorFilter: const ColorFilter.matrix(constants.greyoutMatrix),
               child: TripGridViewItemCard(
                 trip: trip,
+                refreshUrl: refreshUrl,
               ))
           : TripGridViewItemCard(
               trip: trip,
+              refreshUrl: refreshUrl,
             ),
     );
   }

@@ -34,15 +34,18 @@ class TripsListPage extends ConsumerWidget {
     required WidgetRef ref,
     required Trip trip,
   }) async {
-    //final oldUrl = trip.tripImageUrl;
+    debugPrint('refreshImageUrl running');
+    final oldUrl = trip.tripImageUrl;
     final tripController = ref.read(tripControllerProvider);
     final newUrl = await tripController.getSignedUrl(trip, trip.tripImageKey);
+    //immediately update the stream
+    ref.refresh(tripsListStreamProvider);
 
-    //   //final isSame = oldUrl == newUrl;
-    //   //debugPrint('Is Same: $isSame');
-    //   //debugPrint('OLD Url: $oldUrl');
-    //   //debugPrint('NEW Url: $newUrl');
-    //   debugPrint('Url Refreshed for key: ${trip.tripImageKey}');
+    // final isSame = oldUrl == newUrl;
+    // debugPrint('Is Same: $isSame');
+    // debugPrint('OLD Url: $oldUrl');
+    // debugPrint('NEW Url: $newUrl');
+    // debugPrint('Url Refreshed for key: ${trip.tripImageKey}');
   }
 
   @override
@@ -83,9 +86,10 @@ class TripsListPage extends ConsumerWidget {
                         //PASS THE Url Refresh Function HERE!
 
                         TripGridViewItem(
-                      trip: tripData!,
-                      isPast: false,
-                    );
+                            trip: tripData!,
+                            isPast: false,
+                            refreshUrl: () =>
+                                refreshImageUrl(ref: ref, trip: tripData));
                   }).toList(growable: false),
                 );
               }),

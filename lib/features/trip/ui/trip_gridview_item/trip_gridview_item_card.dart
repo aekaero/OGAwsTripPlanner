@@ -7,10 +7,12 @@ import 'package:amplify_trips_planner/common/utils/colors.dart' as constants;
 class TripGridViewItemCard extends StatelessWidget {
   const TripGridViewItemCard({
     required this.trip,
+    required this.refreshUrl,
     super.key,
   });
 
   final Trip trip;
+  final Function refreshUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +40,13 @@ class TripGridViewItemCard extends StatelessWidget {
                                 debugPrint(
                                   'Error on CashedNetworkImage: ${error.toString().substring(0, 50)} for Key: ${trip.tripImageKey}',
                                 );
-// //                                // if statusCode: 403 refresh the signed URL
-//                                   if (error
-//                                       .toString()
-//                                       .contains('statusCode: 403')) {
-//                                     refreshImageUrl(
-//                                       ref: ref,
-//                                       trip: trip,
-//                                     );
-//                                   }
+                                // if statusCode: 403 refresh the signed URL
+                                if (error
+                                    .toString()
+                                    .contains('statusCode: 403')) {
+                                  debugPrint('calling refreshUrl');
+                                  refreshUrl();
+                                }
                                 return const Icon(Icons.error_outline_outlined);
                               },
                               imageUrl: trip.tripImageUrl!,
