@@ -33,30 +33,26 @@ class TripGridViewItemCard extends StatelessWidget {
                 children: [
                   Positioned.fill(
                     child: trip.tripImageUrl != null
-                        ? Stack(children: [
-                            const Center(child: CircularProgressIndicator()),
-                            CachedNetworkImage(
-                              errorWidget: (context, url, dynamic error) {
-                                debugPrint(
-                                  'Error on CashedNetworkImage: ${error.toString().substring(0, 50)} for Key: ${trip.tripImageKey}',
-                                );
-                                // if statusCode: 403 refresh the signed URL
-                                if (error
-                                    .toString()
-                                    .contains('statusCode: 403')) {
-                                  debugPrint('calling refreshUrl');
-                                  refreshUrl();
-                                }
-                                return const Icon(Icons.error_outline_outlined);
-                              },
-                              imageUrl: trip.tripImageUrl!,
-                              cacheKey: trip.tripImageKey,
-                              width: double.maxFinite,
-                              height: 500,
-                              alignment: Alignment.topCenter,
-                              fit: BoxFit.fill,
-                            ),
-                          ])
+                        ? CachedNetworkImage(
+                            errorWidget: (context, url, dynamic error) {
+                              debugPrint(
+                                'Error on CashedNetworkImage: ${error.toString().substring(0, 50)} for Key: ${trip.tripImageKey}',
+                              );
+                              // if statusCode: 403 refresh the signed URL
+                              if (error
+                                  .toString()
+                                  .contains('statusCode: 403')) {
+                                refreshUrl();
+                              }
+                              return const Icon(Icons.error_outline_outlined);
+                            },
+                            imageUrl: trip.tripImageUrl!,
+                            cacheKey: trip.tripImageKey,
+                            width: double.maxFinite,
+                            height: 500,
+                            alignment: Alignment.topCenter,
+                            fit: BoxFit.fill,
+                          )
                         : Image.asset(
                             'images/amplify.png',
                             fit: BoxFit.contain,
