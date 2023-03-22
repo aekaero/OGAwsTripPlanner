@@ -4,18 +4,21 @@ import 'package:go_router/go_router.dart';
 import 'package:amplify_trips_planner/common/navigation/router/routes.dart';
 import 'package:amplify_trips_planner/common/utils/colors.dart' as constants;
 import 'package:amplify_trips_planner/features/trip/ui/trip_gridview_item/trip_gridview_item_card.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TripGridViewItem extends StatelessWidget {
   const TripGridViewItem({
     required this.trip,
     required this.isPast,
-    required this.refreshUrl,
+    required this.ref,
+    required this.listStreamProvider,
     super.key,
   });
 
   final Trip trip;
   final bool isPast;
-  final Function refreshUrl;
+  final WidgetRef ref;
+  final AutoDisposeStreamProvider<List<Trip?>> listStreamProvider;
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +36,14 @@ class TripGridViewItem extends StatelessWidget {
               colorFilter: const ColorFilter.matrix(constants.greyoutMatrix),
               child: TripGridViewItemCard(
                 trip: trip,
-                refreshUrl: refreshUrl,
-              ))
+                ref: ref,
+                listStreamProvider: listStreamProvider,
+              ),
+            )
           : TripGridViewItemCard(
               trip: trip,
-              refreshUrl: refreshUrl,
+              ref: ref,
+              listStreamProvider: listStreamProvider,
             ),
     );
   }

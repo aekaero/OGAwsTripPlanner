@@ -3,16 +3,31 @@ import 'package:amplify_trips_planner/features/trip/ui/trip_gridview_item/trip_g
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:amplify_trips_planner/features/trip/data/trips_repository.dart';
+import 'package:amplify_trips_planner/features/trip/ui/trips_list/add_trip_bottomsheet.dart';
 import 'package:amplify_trips_planner/common/utils/colors.dart' as constants;
 
-class PastTripsList extends ConsumerWidget {
-  const PastTripsList({
+class MultiTripsList extends ConsumerWidget {
+  const MultiTripsList({
+    required this.isPast,
     super.key,
   });
 
+  final bool isPast;
+
+  Future<void> showAddTripDialog(BuildContext context) =>
+      showModalBottomSheet<void>(
+        isScrollControlled: true,
+        elevation: 5,
+        context: context,
+        builder: (sheetContext) {
+          return AddTripBottomSheet();
+        },
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tripsListValue = ref.watch(pastTripsListStreamProvider);
+    final tripsListValue = ref
+        .watch(!isPast ? tripsListStreamProvider : pastTripsListStreamProvider);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -22,6 +37,15 @@ class PastTripsList extends ConsumerWidget {
         backgroundColor: const Color(constants.primaryColorDark),
       ),
       drawer: const nd.NavigationDrawer(),
+      floatingActionButton: !isPast
+          ? FloatingActionButton(
+              onPressed: () {
+                showAddTripDialog(context);
+              },
+              backgroundColor: const Color(constants.primaryColorDark),
+              child: const Icon(Icons.add),
+            )
+          : null,
       body: tripsListValue.when(
         data: (trips) => trips.isEmpty
             ? const Center(
@@ -36,18 +60,19 @@ class PastTripsList extends ConsumerWidget {
                   childAspectRatio:
                       (orientation == Orientation.portrait) ? 0.9 : 1.4,
                   children: trips.map((tripData) {
-                    return Placeholder();
-
-                    //REMOVED TEMPORARILY FOR DEBUG
-                    // TripGridViewItem(
-                    //  trip: tripData!,
-                    //  isPast: true,
-                    //);
+                    return TripGridViewItem(
+                      trip: tripData!,
+                      isPast: isPast,
+                      ref: ref,
+                      listStreamProvider: !isPast
+                          ? tripsListStreamProvider
+                          : pastTripsListStreamProvider,
+                    );
                   }).toList(growable: false),
                 );
               }),
         error: (e, st) => const Center(
-          child: Text('Error'),
+          child: Text('Error Loading Trip List'),
         ),
         loading: () => const Center(
           child: CircularProgressIndicator(),

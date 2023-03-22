@@ -4,15 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:amplify_trips_planner/common/utils/colors.dart' as constants;
 
+// Added for refreshImageUrl
+import 'package:amplify_trips_planner/features/trip/controller/trip_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:amplify_trips_planner/features/trip/data/trips_repository.dart';
+
 class TripGridViewItemCard extends StatelessWidget {
   const TripGridViewItemCard({
     required this.trip,
-    required this.refreshUrl,
+    required this.ref,
+    required this.listStreamProvider,
     super.key,
   });
 
   final Trip trip;
-  final Function refreshUrl;
+  final WidgetRef ref;
+  final AutoDisposeStreamProvider<List<Trip?>> listStreamProvider;
+
+  Future<void> refreshImageUrl() async {
+    //Grab a newly signed Url for the s3 image being displayed
+    final tripController = ref.read(tripControllerProvider);
+    await tripController.getSignedUrl(trip, trip.tripImageKey);
+    //immediately update the stream
+    ref.refresh(listStreamProvider);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +57,7 @@ class TripGridViewItemCard extends StatelessWidget {
                               if (error
                                   .toString()
                                   .contains('statusCode: 403')) {
-                                refreshUrl();
+                                refreshImageUrl();
                               }
                               return const Icon(Icons.error_outline_outlined);
                             },
