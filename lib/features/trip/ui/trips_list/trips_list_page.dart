@@ -6,8 +6,8 @@ import 'package:amplify_trips_planner/features/trip/data/trips_repository.dart';
 import 'package:amplify_trips_planner/features/trip/ui/trips_list/add_trip_bottomsheet.dart';
 import 'package:amplify_trips_planner/common/utils/colors.dart' as constants;
 
-class MultiTripsList extends ConsumerWidget {
-  const MultiTripsList({
+class TripsList extends ConsumerWidget {
+  const TripsList({
     required this.isPast,
     super.key,
   });

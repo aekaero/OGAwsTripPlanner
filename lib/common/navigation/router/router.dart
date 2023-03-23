@@ -4,7 +4,7 @@ import 'package:amplify_trips_planner/features/trip/ui/trip_page/trip_page.dart'
 import 'package:amplify_trips_planner/models/ModelProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:amplify_trips_planner/features/trip/ui/trips_list/multi_trips_list_page.dart';
+import 'package:amplify_trips_planner/features/trip/ui/trips_list/trips_list_page.dart';
 
 import 'package:amplify_trips_planner/features/activity/ui/add_activity/add_activity_page.dart';
 import 'package:amplify_trips_planner/features/activity/ui/activity_page/activity_page.dart';
@@ -16,7 +16,7 @@ final router = GoRouter(
     GoRoute(
         path: '/',
         name: AppRoute.home.name,
-        builder: (context, state) => const MultiTripsList(isPast: false)),
+        builder: (context, state) => const TripsList(isPast: false)),
     GoRoute(
       path: '/trip/:id',
       name: AppRoute.trip.name,
@@ -40,7 +40,7 @@ final router = GoRouter(
     GoRoute(
       path: '/pasttrips',
       name: AppRoute.pasttrips.name,
-      builder: (context, state) => const MultiTripsList(isPast: true),
+      builder: (context, state) => const TripsList(isPast: true),
     ),
     GoRoute(
       path: '/pasttrip/:id',

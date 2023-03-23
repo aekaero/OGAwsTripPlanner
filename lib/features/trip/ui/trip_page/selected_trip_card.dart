@@ -104,6 +104,9 @@ class SelectedTripCard extends ConsumerWidget {
                       height: 500,
                       alignment: Alignment.topCenter,
                       fit: BoxFit.fill,
+                      errorWidget: (context, url, dynamic error) {
+                        return const Icon(Icons.error_outline_outlined);
+                      },
                     ),
                   ])
                 : Image.asset(
