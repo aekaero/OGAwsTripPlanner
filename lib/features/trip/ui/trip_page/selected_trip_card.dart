@@ -95,8 +95,6 @@ class SelectedTripCard extends ConsumerWidget {
 
             child: !(trip.tripImageUrl == null || trip.tripImageKey == '')
                 ? Stack(children: [
-                    //Sucks power, use inside cashedNetwork if wanted
-                    //const Center(child: CircularProgressIndicator()),
                     CachedNetworkImage(
                       cacheKey: trip.tripImageKey,
                       imageUrl: trip.tripImageUrl!,
@@ -107,6 +105,8 @@ class SelectedTripCard extends ConsumerWidget {
                       errorWidget: (context, url, dynamic error) {
                         return const Icon(Icons.error_outline_outlined);
                       },
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
                     ),
                   ])
                 : Image.asset(

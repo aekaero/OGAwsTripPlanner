@@ -58,6 +58,8 @@ class TripGridViewItemCard extends StatelessWidget {
                     child: !(trip.tripImageUrl == null ||
                             trip.tripImageKey == '')
                         ? CachedNetworkImage(
+                            placeholder: (context, url) =>
+                                const CircularProgressIndicator(),
                             errorWidget: (context, url, dynamic error) {
                               // if statusCode: 403 refresh the signed URL
                               if (error
