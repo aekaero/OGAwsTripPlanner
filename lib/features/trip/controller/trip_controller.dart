@@ -35,6 +35,18 @@ class TripController {
     return imageUrl;
   }
 
+  Future<void> deleteImageKey(Trip trip) async {
+    // Removes an image from a trip by putting the key  and url to ''.
+    // Null can not be used as it will be ignored by updates
+    // This can be envoked when the S3 image can not be found and does
+    // require a check, just like null does, prior to calling imageProviders,
+    // such as CashedNetworkImage, to avoid an error.
+    final updatedTrip = trip.copyWith(tripImageKey: '', tripImageUrl: '');
+    final trp = ref.read(tripsRepositoryProvider);
+    await trp.update(updatedTrip);
+    return;
+  }
+
   ValueNotifier<double> uploadProgress() {
     return ref.read(storageServiceProvider).getUploadProgress();
   }

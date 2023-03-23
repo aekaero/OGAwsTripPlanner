@@ -8,12 +8,16 @@ import 'package:amplify_trips_planner/common/utils/colors.dart' as constants;
 import 'package:amplify_trips_planner/features/trip/ui/trip_page/selected_trip_card.dart';
 import 'package:amplify_trips_planner/features/activity/ui/activities_list/activities_list.dart';
 
+import 'package:amplify_trips_planner/models/Trip.dart';
+
 class TripPage extends ConsumerWidget {
   const TripPage({
     required this.tripId,
+    required this.isPast,
     super.key,
   });
   final String tripId;
+  final bool isPast;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,74 +40,87 @@ class TripPage extends ConsumerWidget {
         ],
         backgroundColor: const Color(constants.primaryColorDark),
       ),
-      floatingActionButton: tripValue.when(
-        data: (trip) => FloatingActionButton(
-          onPressed: () {
-            context.goNamed(
-              AppRoute.addactivity.name,
-              params: {'id': tripId},
-            );
-          },
-          backgroundColor: const Color(constants.primaryColorDark),
-          child: const Icon(Icons.add),
-        ),
-        error: (e, st) => const Placeholder(),
-        loading: () => const Placeholder(),
-      ),
-      body: tripValue.when(
-        data: (trip) => trip == null
-            ? const Center(
-                child: Text('Trip Not Found'),
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  SelectedTripCard(trip: trip),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  const Divider(
-                    height: 20,
-                    thickness: 5,
-                    indent: 20,
-                    endIndent: 20,
-                  ),
-                  const Text(
-                    'Your Activities',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Expanded(
-                    child: ActivitiesList(
-                      trip: trip,
-                    ),
-                  ),
-                ],
+      floatingActionButton: !isPast
+          ? tripValue.when(
+              data: (trip) => FloatingActionButton(
+                onPressed: () {
+                  context.goNamed(
+                    AppRoute.addactivity.name,
+                    params: {'id': tripId},
+                  );
+                },
+                backgroundColor: const Color(constants.primaryColorDark),
+                child: const Icon(Icons.add),
               ),
-        error: (e, st) => Center(
-          child: Column(
-            children: [
-              Text(e.toString()),
-              TextButton(
-                  onPressed: () async {
-                    ref.refresh(tripProvider(tripId));
-                  },
-                  child: const Text('Try again')),
-            ],
-          ),
+              error: (e, st) => const Placeholder(),
+              loading: () => const Placeholder(),
+            )
+          : null,
+      body: isPast
+          ? ColorFiltered(
+              colorFilter: const ColorFilter.matrix(constants.greyoutMatrix),
+              child: tripCard(ref, tripValue, tripId))
+          : tripCard(ref, tripValue, tripId),
+    );
+  }
+
+  Widget tripCard(WidgetRef ref, AsyncValue<Trip?> tripValue, String tripId) {
+    return tripValue.when(
+      data: (trip) => trip == null
+          ? const Center(
+              child: Text('Trip Not Found'),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(
+                  height: 8,
+                ),
+                SelectedTripCard(
+                  trip: trip,
+                  isPast: isPast,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 20,
+                ),
+                const Text(
+                  'Your Activities',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Expanded(
+                  child: ActivitiesList(
+                    trip: trip,
+                  ),
+                ),
+              ],
+            ),
+      error: (e, st) => Center(
+        child: Column(
+          children: [
+            Text(e.toString()),
+            TextButton(
+                onPressed: () async {
+                  ref.refresh(tripProvider(tripId));
+                },
+                child: const Text('Try again')),
+          ],
         ),
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
+      ),
+      loading: () => const Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }

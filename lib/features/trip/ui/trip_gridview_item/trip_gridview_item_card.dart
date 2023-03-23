@@ -29,6 +29,14 @@ class TripGridViewItemCard extends StatelessWidget {
     ref.refresh(listStreamProvider);
   }
 
+  Future<void> deleteImageKey() async {
+    //This file can not be located in S3, remove the image key to clear the image
+    final tripController = ref.read(tripControllerProvider);
+    await tripController.deleteImageKey(trip);
+    //immediately update the stream
+    ref.refresh(listStreamProvider);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -47,18 +55,40 @@ class TripGridViewItemCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: trip.tripImageUrl != null
+                    child: !(trip.tripImageUrl == null ||
+                            trip.tripImageKey == '')
                         ? CachedNetworkImage(
                             errorWidget: (context, url, dynamic error) {
-                              debugPrint(
-                                'Error on CashedNetworkImage: ${error.toString().substring(0, 50)} for Key: ${trip.tripImageKey}',
-                              );
                               // if statusCode: 403 refresh the signed URL
                               if (error
                                   .toString()
                                   .contains('statusCode: 403')) {
                                 refreshImageUrl();
+                                debugPrint(
+                                  'Error on CashedNetworkImage: Refreshing Signed Url: ${trip.tripImageKey}',
+                                );
+                              } else if (error
+                                  .toString()
+                                  .contains('statusCode: 404')) {
+                                //S3 fetch could not locate this imageKey, update trip to have no image
+                                deleteImageKey();
+                                debugPrint(
+                                  'Error on CashedNetworkImage: S3 File not found for: ${trip.tripImageKey}',
+                                );
+                              } else if (error
+                                  .toString()
+                                  .contains('statusCode: 400')) {
+                                //Url is malformed - delete image
+
+                                debugPrint(
+                                  'Error 400 on CashedNetworkImage File not found for: ${trip.tripImageKey} ImageUrl: ${trip.tripImageUrl}',
+                                );
+                                deleteImageKey();
+                              } else {
+                                debugPrint(
+                                    'Error on CashedNetworkImage: ${error.toString()} for Key: ${trip.tripImageKey} ImageUrl: ${trip.tripImageUrl}');
                               }
+
                               return const Icon(Icons.error_outline_outlined);
                             },
                             imageUrl: trip.tripImageUrl!,

@@ -17,8 +17,11 @@ import 'package:amplify_trips_planner/common/ui/upload_progress_dialog.dart';
 class SelectedTripCard extends ConsumerWidget {
   const SelectedTripCard({
     required this.trip,
+    required this.isPast,
     super.key,
   });
+
+  final bool isPast;
 
   final Trip trip;
 
@@ -90,9 +93,10 @@ class SelectedTripCard extends ConsumerWidget {
             color: const Color(constants.primaryColorDark), //Color(0xffE1E5E4),
             height: 150,
 
-            child: trip.tripImageUrl != null
+            child: !(trip.tripImageUrl == null || trip.tripImageKey == '')
                 ? Stack(children: [
-                    const Center(child: CircularProgressIndicator()),
+                    //Sucks power, use inside cashedNetwork if wanted
+                    //const Center(child: CircularProgressIndicator()),
                     CachedNetworkImage(
                       cacheKey: trip.tripImageKey,
                       imageUrl: trip.tripImageUrl!,
@@ -107,44 +111,45 @@ class SelectedTripCard extends ConsumerWidget {
                     fit: BoxFit.contain,
                   ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                onPressed: () {
-                  context.goNamed(
-                    AppRoute.edittrip.name,
-                    params: {'id': trip.id},
-                    extra: trip,
-                  );
-                },
-                icon: const Icon(Icons.edit),
-              ),
-              IconButton(
-                onPressed: () {
-                  uploadImage(
-                    context: context,
-                    trip: trip,
-                    ref: ref,
-                  ).then((value) =>
-                      Navigator.of(context, rootNavigator: true).pop());
-                },
-                icon: const Icon(Icons.camera_enhance_sharp),
-              ),
-              IconButton(
-                onPressed: () {
-                  deleteTrip(context, ref, trip).then((value) {
-                    if (value) {
-                      context.goNamed(
-                        AppRoute.home.name,
-                      );
-                    }
-                  });
-                },
-                icon: const Icon(Icons.delete),
-              ),
-            ],
-          )
+          if (!isPast)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    context.goNamed(
+                      AppRoute.edittrip.name,
+                      params: {'id': trip.id},
+                      extra: trip,
+                    );
+                  },
+                  icon: const Icon(Icons.edit),
+                ),
+                IconButton(
+                  onPressed: () {
+                    uploadImage(
+                      context: context,
+                      trip: trip,
+                      ref: ref,
+                    ).then((value) =>
+                        Navigator.of(context, rootNavigator: true).pop());
+                  },
+                  icon: const Icon(Icons.camera_enhance_sharp),
+                ),
+                IconButton(
+                  onPressed: () {
+                    deleteTrip(context, ref, trip).then((value) {
+                      if (value) {
+                        context.goNamed(
+                          AppRoute.home.name,
+                        );
+                      }
+                    });
+                  },
+                  icon: const Icon(Icons.delete),
+                ),
+              ],
+            ),
         ],
       ),
     );
