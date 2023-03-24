@@ -25,8 +25,11 @@ class TripGridViewItemCard extends StatelessWidget {
     //Grab a newly signed Url for the s3 image being displayed
     final tripController = ref.read(tripControllerProvider);
     await tripController.getSignedUrl(trip, trip.tripImageKey);
+
     //immediately update the stream
     ref.refresh(listStreamProvider);
+    //try this newer method in 2.32 riverpods, is suposed to be safer
+    //ref.invalidate(listStreamProvider)
   }
 
   Future<void> deleteImageKey() async {
