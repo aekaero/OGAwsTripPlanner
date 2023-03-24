@@ -19,7 +19,9 @@ class StorageService {
   Future<String> getImageUrl(String key) async {
     final result = await Amplify.Storage.getUrl(
       key: key,
-      options: S3GetUrlOptions(expires: 60000),
+      // number of seconds before the signed link expires
+      options: S3GetUrlOptions(expires: 15),
+      //options: S3GetUrlOptions(expires: 60000),
     );
     return result.url;
   }
