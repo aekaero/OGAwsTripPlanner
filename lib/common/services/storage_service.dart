@@ -55,8 +55,13 @@ final storageServiceProvider = Provider<StorageService>((ref) {
   return StorageService(ref: ref);
 });
 
-final imageUrlProvider =
-    FutureProvider.autoDispose.family<String, String>((ref, key) {
-  final storageService = ref.watch(storageServiceProvider);
-  return storageService.getImageUrl(key);
-});
+// This is an interesting code snipet from the AWS example.  It is not used anywhere
+// in the application.  I wonder if this was an attempt to deal with the resigning
+// of a failed cashenetworkimage from an expired URL and they never implemented it.
+// I wrote my own work around... might this be more elegant?  I'm not exactly sure
+// how it was intended to be used, but left it in here for contemplation
+// final imageUrlProvider =
+//     FutureProvider.autoDispose.family<String, String>((ref, key) {
+//   final storageService = ref.watch(storageServiceProvider);
+//   return storageService.getImageUrl(key);
+//});
